@@ -1,10 +1,10 @@
 "use client";
 
 import type { Ref } from "react";
+import type { RowDraft } from "@/lib/set-rows";
 import { useRecipe } from "../design-system/RecipeContext";
 import NumberField from "./NumberField";
 
-export type RowDraft = { reps: string; weight: string; done: boolean };
 export type RowErrors = { reps?: string; weight?: string };
 
 // Column template shared by the header row and every set row.

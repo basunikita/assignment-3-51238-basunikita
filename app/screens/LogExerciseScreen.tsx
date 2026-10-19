@@ -5,16 +5,17 @@ import { useRef, useState } from "react";
 import { formatShort } from "@/lib/dates";
 import { findExercise } from "@/lib/exercises";
 import { TONE_LABELS, dayInfo, type DayInfo } from "@/lib/routine";
-import { chartSummary, formatSets, lastSession, maxWeightSeries, newBest, prefillRows } from "@/lib/stats";
+import { addRow, draftsFrom, tickRow, toSetRow, type RowDraft } from "@/lib/set-rows";
+import { chartSummary, formatSets, lastSession, maxWeightSeries, newBest } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
-import type { Exercise, SetRow, Settings, StrengthDayId, Store } from "@/lib/types";
+import type { Exercise, Settings, StrengthDayId, Store } from "@/lib/types";
 import { checkReps, checkWeight } from "@/lib/validation";
 import { findWorkout, saveEntry } from "@/lib/workouts";
 import Banner from "../components/Banner";
 import LoadGate from "../components/LoadGate";
 import MaxWeightChart from "../components/MaxWeightChart";
 import PageHeader from "../components/PageHeader";
-import SetRowEditor, { SET_GRID, type RowDraft, type RowErrors } from "../components/SetRowEditor";
+import SetRowEditor, { SET_GRID, type RowErrors } from "../components/SetRowEditor";
 import { useToast } from "../components/ToastProvider";
 import Badge from "../design-system/components/Badge";
 import RadioGroup from "../design-system/components/RadioGroup";
@@ -27,19 +28,6 @@ const REST_CHOICES = [
   { value: "90", label: "90 s" },
   { value: "120", label: "2 min" },
 ];
-
-const toDraft = (set: SetRow): RowDraft => ({
-  reps: set.reps === null ? "" : String(set.reps),
-  weight: set.weight === null ? "" : String(set.weight),
-  done: set.done,
-});
-
-// Invalid or empty fields are saved as null; a row only stays done with real numbers.
-const toSetRow = (row: RowDraft): SetRow => {
-  const reps = checkReps(row.reps).value;
-  const weight = checkWeight(row.weight).value;
-  return { reps, weight, done: row.done && reps !== null && weight !== null };
-};
 
 function checkRow(row: RowDraft): RowErrors {
   const errors: RowErrors = {};
@@ -59,7 +47,7 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
 
   const [rows, setRows] = useState<RowDraft[]>(() => {
     const saved = findWorkout(store, startToday, dayId)?.entries.find((entry) => entry.exerciseId === exercise.id);
-    return (saved?.sets ?? prefillRows(last)).map(toDraft);
+    return draftsFrom(saved?.sets, last);
   });
   const [touched, setTouched] = useState<boolean[]>(() => rows.map(() => false));
   const [errors, setErrors] = useState<RowErrors[]>(() => rows.map(() => ({})));
@@ -108,7 +96,7 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
     const rowErrors = checkRow(row);
     const nextErrors = errors.map((existing, i) => (i === index ? rowErrors : existing));
     if (rowErrors.reps || rowErrors.weight) setErrors(nextErrors);
-    else commit(rowsRef.current, touched, nextErrors);
+    else commit(rowsRef.current.map((r, i) => (i === index ? tickRow(r) : r)), touched, nextErrors);
   };
 
   const tick = (index: number) => {
@@ -124,21 +112,20 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
       (rowErrors.reps ? repsRefs : weightRefs).current[index]?.focus();
       return;
     }
-    const reps = checkReps(row.reps).value as number;
-    const weight = checkWeight(row.weight).value as number;
+    const ticked = tickRow(row);
     commit(
-      rows.map((r, i) => (i === index ? { reps: String(reps), weight: String(weight), done: true } : r)),
+      rows.map((r, i) => (i === index ? ticked : r)),
       touched,
       nextErrors,
     );
     setTimerStarts((count) => count + 1);
+    const weight = ticked.saved?.weight as number;
     const best = newBest(store, exercise.id, today(), weight);
     if (best) setBestMessage(`New best: ${weight} lb (was ${best.previous} lb)`);
   };
 
   const addSet = () => {
-    const above = rows[rows.length - 1];
-    commit([...rows, { reps: above.reps, weight: above.weight, done: false }], [...touched, false], [...errors, {}]);
+    commit(addRow(rows), [...touched, false], [...errors, {}]);
   };
 
   const removeSet = (index: number) => {

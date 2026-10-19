@@ -10,6 +10,7 @@ import { useStore } from "@/lib/store-client";
 import type { CardioOptionId, Exercise, StrengthDayId, Store } from "@/lib/types";
 import { MESSAGES } from "@/lib/validation";
 import { countsAsWorkout, findWorkout, finishWorkout, saveCardio } from "@/lib/workouts";
+import CardioPicker from "../components/CardioPicker";
 import ExerciseRow from "../components/ExerciseRow";
 import LoadGate from "../components/LoadGate";
 import PageHeader from "../components/PageHeader";
@@ -113,7 +114,6 @@ function StrengthDay({ store, today, day }: { store: Store; today: string; day: 
 }
 
 function CardioDay({ store, today, day }: { store: Store; today: string; day: DayInfo }) {
-  const recipe = useRecipe();
   const router = useRouter();
   const toast = useToast();
   const { update } = useStore();
@@ -142,32 +142,7 @@ function CardioDay({ store, today, day }: { store: Store; today: string; day: Da
   return (
     <>
       <PageHeader back={BACK_TO_TODAY} title={day.name} badge={<Badge tone="cardio">{TONE_LABELS.cardio}</Badge>} meta="Pick one" />
-      <fieldset aria-describedby={optionError ? "cardio-error" : undefined} className="grid gap-3">
-        <legend className={`${recipe.fieldLabel} mb-2`}>Which cardio did you do?</legend>
-        {CARDIO_OPTIONS.map((option, index) => (
-          <label
-            key={option.id}
-            htmlFor={`cardio-${option.id}`}
-            className={`${recipe.card.root} flex cursor-pointer items-start gap-3 p-4 has-checked:bg-accent has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus`}
-          >
-            <input
-              ref={index === 0 ? firstOption : undefined}
-              id={`cardio-${option.id}`}
-              type="radio"
-              name="cardio"
-              value={option.id}
-              checked={optionId === option.id}
-              onChange={() => choose(option.id)}
-              className={`${recipe.radio} mt-1 outline-none`}
-            />
-            <span className="grid gap-1">
-              <span className={recipe.card.title}>{option.label}</span>
-              <span className="font-bold">{option.detail}</span>
-            </span>
-          </label>
-        ))}
-        {optionError && <FieldError id="cardio-error" message={MESSAGES.cardioOption} />}
-      </fieldset>
+      <CardioPicker name="cardio" value={optionId} onChange={choose} error={optionError ? MESSAGES.cardioOption : undefined} firstOptionRef={firstOption} />
       <Button onClick={save}>Save cardio</Button>
     </>
   );

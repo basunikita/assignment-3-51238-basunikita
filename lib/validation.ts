@@ -61,7 +61,12 @@ export function checkExerciseForm(store: Store, input: { name: string; dayId: st
 }
 
 // Where the add-exercise form may send you back to: a path inside this app, nothing else.
+// Parsing it as a URL catches tricks like "/\t/evil.example", which browsers read as //evil.example.
 export function safeReturnTo(raw: string | undefined): string | null {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return null;
-  return raw;
+  if (!raw || !raw.startsWith("/")) return null;
+  const base = "http://plate-log.invalid";
+  const url = new URL(raw, base);
+  if (url.origin !== base) return null;
+  const path = url.pathname + url.search + url.hash;
+  return path === raw ? raw : null;
 }

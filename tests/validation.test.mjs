@@ -68,3 +68,10 @@ test("only in-app paths are allowed as a return address", () => {
   assert.equal(safeReturnTo(""), null);
   assert.equal(safeReturnTo(undefined), null);
 });
+
+test("return addresses with control characters can't leave the app (final review #4)", () => {
+  assert.equal(safeReturnTo("/\t/evil.example"), null);
+  assert.equal(safeReturnTo("/\n/evil.example"), null);
+  assert.equal(safeReturnTo("/\r/evil.example"), null);
+  assert.equal(safeReturnTo("/workout/legs?x=1"), "/workout/legs?x=1");
+});

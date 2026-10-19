@@ -111,3 +111,10 @@ test("a seed that can't be written still loads, as unavailable", () => {
   const { status } = loadStore(fakeStorage({ failWrites: true }), NOW);
   assert.equal(status, "unavailable");
 });
+
+test("cardio saved before minutes were removed still loads", () => {
+  const storage = fakeStorage();
+  const old = { ...createSeed(), workouts: [{ id: "c", date: "2026-10-16", dayId: "cardio", entries: [], cardio: { optionId: "incline", minutes: 30 }, finishedAt: "x" }] };
+  storage.setItem(STORAGE_KEY, JSON.stringify(old));
+  assert.equal(loadStore(storage, NOW).status, "ok");
+});

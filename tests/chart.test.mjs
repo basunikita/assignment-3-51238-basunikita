@@ -28,3 +28,13 @@ test("date labels thin out to about six, always keeping the first and last", () 
   assert.equal(many.at(-1), 19);
   assert.deepEqual(labelIndexes(0), []);
 });
+
+test("the last two date labels are never next to each other (final review #15)", () => {
+  for (let count = 7; count <= 40; count++) {
+    const indexes = labelIndexes(count);
+    const gaps = indexes.slice(1).map((index, i) => index - indexes[i]);
+    const every = gaps[0];
+    assert.ok(gaps.at(-1) >= every / 2, `${count} points: ${indexes}`);
+    assert.equal(indexes.at(-1), count - 1);
+  }
+});

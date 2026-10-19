@@ -9,13 +9,13 @@ import { useStore } from "@/lib/store-client";
 import type { CardioOptionId, SetRow, Store, Workout } from "@/lib/types";
 import { checkReps, checkWeight, type Checked } from "@/lib/validation";
 import { countsAsWorkout, deleteWorkout, isLogged, restoreWorkout, updateCardio, updateSets, workoutsOn } from "@/lib/workouts";
+import CardioPicker from "../components/CardioPicker";
 import LoadGate from "../components/LoadGate";
 import NumberField from "../components/NumberField";
 import PageHeader from "../components/PageHeader";
 import { useToast } from "../components/ToastProvider";
 import Badge from "../design-system/components/Badge";
 import Button from "../design-system/components/Button";
-import RadioGroup from "../design-system/components/RadioGroup";
 import StatePanel from "../design-system/components/StatePanel";
 import { useRecipe } from "../design-system/RecipeContext";
 
@@ -34,6 +34,14 @@ function LoggedSet({ idPrefix, number, set, headIds, onSave, onRemove }: {
   const [reps, setReps] = useState(String(set.reps));
   const [weight, setWeight] = useState(String(set.weight));
   const [errors, setErrors] = useState<{ reps?: string; weight?: string }>({});
+  // When the stored set changes (a save, or a removal shifting rows up), show the new numbers
+  // without remounting, so keyboard focus stays where it is.
+  const [shown, setShown] = useState(set);
+  if (shown.reps !== set.reps || shown.weight !== set.weight) {
+    setShown(set);
+    setReps(String(set.reps));
+    setWeight(String(set.weight));
+  }
   const labelId = `${idPrefix}-label`;
   const errorId = `${idPrefix}-error`;
 
@@ -124,7 +132,7 @@ function StrengthCard({ store, workout }: { store: Store; workout: Workout }) {
             <ol className="grid gap-2">
               {logged.map(({ set, index }, n) => (
                 <LoggedSet
-                  key={`${index}-${set.reps}-${set.weight}`}
+                  key={n}
                   idPrefix={`${workout.id}-${entry.exerciseId}-${index}`}
                   number={n + 1}
                   set={set}
@@ -147,13 +155,7 @@ function CardioCard({ workout }: { workout: Workout }) {
   const [optionId, setOptionId] = useState<CardioOptionId>(workout.cardio?.optionId ?? "run");
   return (
     <div className="grid gap-3">
-      <RadioGroup
-        name={`cardio-${workout.id}`}
-        legend="Which cardio did you do?"
-        options={CARDIO_OPTIONS.map((option) => ({ value: option.id, label: option.label }))}
-        value={optionId}
-        onChange={(value) => setOptionId(value as CardioOptionId)}
-      />
+      <CardioPicker name={`cardio-${workout.id}`} value={optionId} onChange={setOptionId} />
       <Button
         variant="secondary"
         className="self-start"

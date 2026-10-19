@@ -22,6 +22,8 @@ export function labelIndexes(count: number): number[] {
   const every = Math.ceil((count - 1) / (MAX_LABELS - 1));
   const indexes = [];
   for (let i = 0; i < count - 1; i += every) indexes.push(i);
+  // Drop a regular label that would sit right next to the last one.
+  if (count - 1 - (indexes.at(-1) as number) < every / 2) indexes.pop();
   indexes.push(count - 1);
   return indexes;
 }
