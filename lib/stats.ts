@@ -136,3 +136,18 @@ export function streakWeeks(store: Store, today: string): number {
   }
   return streak;
 }
+
+// The line under an exercise on the workout page: what you did last time and what to try.
+export function lastTimeLine(last: Session | null): string {
+  if (!last) return "Not logged yet";
+  const suggestion = suggestedWeight(last);
+  return `Last ${formatSets(last.sets)}${suggestion === null ? "" : ` · try ${suggestion}`}`;
+}
+
+// How many exercises in this workout beat their best from earlier dates.
+export function newBestCount(store: Store, workout: Workout): number {
+  return workout.entries.filter((entry) => {
+    const weights = entry.sets.filter(isLogged).map((set) => set.weight as number);
+    return weights.length > 0 && newBest(store, entry.exerciseId, workout.date, Math.max(...weights)) !== null;
+  }).length;
+}

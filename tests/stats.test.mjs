@@ -162,3 +162,22 @@ test("a gap week breaks the streak", () => {
   ]);
   assert.equal(streakWeeks(store, TODAY), 1);
 });
+
+test("the last-time line on a workout's exercise rows", async () => {
+  const { lastTimeLine } = await import("../lib/stats.ts");
+  assert.equal(lastTimeLine(null), "Not logged yet");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [10, 50, true], [10, 50, true]), max: 50 }), "Last 3 × 10 @ 50 lb · try 55");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [8, 50, true]), max: 50 }), "Last 10, 8 @ 50 lb · try 50");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 0, true], [10, 0, true], [10, 0, true]), max: 0 }), "Last 3 × 10 · bodyweight");
+});
+
+test("new bests in a workout compare each exercise's heaviest set with earlier dates", async () => {
+  const { newBestCount } = await import("../lib/stats.ts");
+  const today = strength(TODAY, "back-biceps", [
+    entry("lat-pulldowns", [10, 55, true], [10, 50, true]), // beats 52.5
+    entry("face-pulls", [10, 20, true]), // first time: not a "new best"
+    entry("barbell-curls", [10, 99, false]), // not ticked
+  ]);
+  const store = { ...history, workouts: [...history.workouts.filter((w) => w.date !== TODAY), today] };
+  assert.equal(newBestCount(store, today), 1);
+});
