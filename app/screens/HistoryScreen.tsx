@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { addMonths, formatDayShort, monthOf } from "@/lib/dates";
 import { dayInfo } from "@/lib/routine";
-import { workoutSummary } from "@/lib/stats";
+import { historyLine } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
 import type { Store, Tone, Workout } from "@/lib/types";
 import { countsAsWorkout } from "@/lib/workouts";
@@ -64,7 +64,7 @@ function History({ store, today }: { store: Store; today: string }) {
                   <span>
                     {formatDayShort(workout.date)} · {dayInfo(workout.dayId)?.name}
                   </span>
-                  <span className="text-sm font-bold text-muted">{workoutSummary(store, workout)}</span>
+                  <span className="text-sm font-bold text-muted">{historyLine(store, workout)}</span>
                 </span>
                 <span aria-hidden="true" className="font-display text-2xl">
                   ›

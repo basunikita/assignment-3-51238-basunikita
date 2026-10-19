@@ -7,7 +7,7 @@ workouts, and lets me add new exercises. It saves to the browser, so there's no 
 
 It reuses the **Plate Room** style and my workout routine from Assignment 2.
 
-- Live site: _coming soon (Vercel)_
+- Live site: https://assignment-3-51238-basunikita.vercel.app
 - Flows: [`flows.md`](flows.md)
 - Onboarding research: [`docs/research/onboarding.md`](docs/research/onboarding.md)
 
@@ -93,8 +93,50 @@ Yellow is only ever a fill behind ink text, never text itself (1.4:1 on white).
 
 ## First-run check
 
-_To do after deploying: an agent will try the live site as a brand-new user, come back later,
-and give usability feedback here._
+After deploying, I gave a fresh agent the live URL. It had never seen the app or its design, and
+its goal was **"Log today's workout."**
+- It went through the first visit and logged two exercises set by set, making mistakes on purpose.
+- It finished the workout.
+- Then it "came back next week": it moved its first workout's date back a week and reloaded.
+- It used a 390px phone frame.
+
+**What it found:**
+
+- **First visit:** "the purpose is obvious." It was **4 taps to the first logged set**: pick the day,
+  pick the exercise, type the weight, ✓. The only confusion was that "your routine" wasn't *its*
+  routine, and it couldn't change it.
+- **Main task:** logging is fast. Every error it triggered was specific and sat under the right row:
+  - "Enter the weight you lifted, in lb."
+  - "Enter reps as a whole number from 1 to 100."
+  - "Choose which day it belongs to."
+
+  Focus moved to the field with the problem. Friction: on a first session, sets 2 and 3 started
+  with a blank weight.
+- **Coming back:** "the best part." It got:
+  - Welcome back, the week strip and "2 weeks in a row";
+  - "Last time · Oct 11: …" with every set prefilled, so logging became one tap per set;
+  - a max-weight chart with a plain-language summary;
+  - "Workout saved · 1 exercise, 3 sets · 1 new best".
+
+**Its ranked issues, and what I did about them:**
+
+| # | Issue it found | What changed |
+|---|---|---|
+| 1 | The preloaded routine can't be edited, renamed or removed | **Not changed.** Plate Log is built around my own routine. Editing it was out of scope in the spec. |
+| 2 | An exercise done today showed "DONE" next to "Not logged yet" | **Fixed:** the row now shows today's sets, e.g. "Today 3 × 10 @ 40 lb". |
+| 3 | After Finish, reopening the day still said "Continuing today's workout", and History didn't mark unfinished workouts | **Fixed:** it now says "Finished today · you can still edit", and History marks unfinished workouts "in progress". |
+| 4 | On a first session, the weight wasn't carried to the next set | **Fixed:** ticking a set fills the blank weights of the untouched sets below it. |
+| 5 | The Undo bar covered the docked rest timer | **Fixed:** the Undo bar now sits above the timer. |
+| 6 | A newly added exercise's page is a dead end ("Find it in a workout"), and extras count toward "1 of 8 done" | **Not changed:** extras appear on every strength day, so they're one tap away in any workout. |
+| 7 | Small things: "Welcome back" right after the first workout, "Start" instead of "Resume" on a paused timer, the Exercises tab highlighted while adding from a workout | Noted for later. |
+
+What it said worked well:
+- no setup;
+- the error handling;
+- the return value from "Last time" and the prefilled sets;
+- Undo instead of confirm dialogs;
+- a back link and a marked tab on every page;
+- a logical tab order with a visible focus ring.
 
 ## Running it
 

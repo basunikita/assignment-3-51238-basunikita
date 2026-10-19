@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { formatShort } from "@/lib/dates";
 import { findExercise } from "@/lib/exercises";
 import { TONE_LABELS, dayInfo, type DayInfo } from "@/lib/routine";
-import { addRow, draftsFrom, tickRow, toSetRow, type RowDraft } from "@/lib/set-rows";
+import { addRow, carryWeight, draftsFrom, tickRow, toSetRow, type RowDraft } from "@/lib/set-rows";
 import { chartSummary, formatSets, lastSession, maxWeightSeries, newBest } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
 import type { Exercise, Settings, StrengthDayId, Store } from "@/lib/types";
@@ -114,7 +114,11 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
     }
     const ticked = tickRow(row);
     commit(
-      rows.map((r, i) => (i === index ? ticked : r)),
+      carryWeight(
+        rows.map((r, i) => (i === index ? ticked : r)),
+        touched,
+        index,
+      ),
       touched,
       nextErrors,
     );

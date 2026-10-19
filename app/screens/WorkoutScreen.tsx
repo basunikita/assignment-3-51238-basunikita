@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { exercisesForDay, extraExercises } from "@/lib/exercises";
 import { CARDIO_OPTIONS, TARGET_REPS, TARGET_SETS, TONE_LABELS, dayInfo, type DayInfo } from "@/lib/routine";
-import { exerciseProgress, lastSession, lastTimeLine, newBestCount, weekStrip, workoutSummary } from "@/lib/stats";
+import { exerciseLine, exerciseProgress, newBestCount, weekStrip, workoutSummary } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
 import type { CardioOptionId, Exercise, StrengthDayId, Store } from "@/lib/types";
 import { MESSAGES } from "@/lib/validation";
@@ -55,7 +55,7 @@ function StrengthDay({ store, today, day }: { store: Store; today: string; day: 
       <ExerciseRow
         href={`/workout/${dayId}/${exercise.id}`}
         name={exercise.name}
-        lastLine={lastTimeLine(lastSession(store, exercise.id, today))}
+        lastLine={exerciseLine(store, exercise.id, today, workout)}
         progress={exerciseProgress(workout, exercise.id)}
       />
     </li>
@@ -79,7 +79,7 @@ function StrengthDay({ store, today, day }: { store: Store; today: string; day: 
       <PageHeader back={BACK_TO_TODAY} title={day.name} badge={<Badge tone={day.tone}>{TONE_LABELS[day.tone]}</Badge>} meta={`${total} exercises · ${TARGET_SETS} × ${TARGET_REPS}`} />
       {workout && (
         <p className="border-2 border-ink bg-surface p-3 font-bold">
-          Continuing today&apos;s workout · {doneCount} of {total} done
+          {workout.finishedAt ? "Finished today · you can still edit" : `Continuing today's workout · ${doneCount} of ${total} done`}
         </p>
       )}
       <ul aria-label={`${day.name} exercises`} className={recipe.rows.list}>

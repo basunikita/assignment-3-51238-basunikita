@@ -550,3 +550,19 @@ This is in scope (plan step 8).
 - Notifications.
 - Days pinned to weekdays.
 - A "next day in order" suggestion. (Nikita chose to pick the day each time.)
+
+## 14. Changes after the first-run check (2026-10-18)
+
+Nikita picked these from the deployed first-run check. The README lists all of its feedback.
+
+- **Day page rows:** once an exercise has logged sets today, its line shows them ("Today 3 × 10 @
+  40 lb") instead of last time. This removes "DONE · Not logged yet" on a first session.
+- **Finished workouts:** reopening a finished day says "Finished today · you can still edit", not
+  "Continuing today's workout". History marks unfinished strength workouts "· in progress".
+- **Weight carries down:** ticking a set fills the empty weight of every untouched, unticked set
+  below it with that weight.
+- **Toast position:** the toast sits higher than the docked rest timer, so Undo never covers it.
+- **Not changed:**
+  - editing or removing the routine's exercises (out of scope, §13);
+  - a "Log it now" button for new exercises;
+  - leaving extras out of the progress count.

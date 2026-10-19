@@ -39,3 +39,17 @@ test("adding a set copies the row above, or starts a fresh row when there are no
   assert.deepEqual(addRow([{ reps: "8", weight: "55", done: true, saved: { reps: 8, weight: 55 } }]).at(-1), { reps: "8", weight: "55", done: false });
   assert.deepEqual(addRow([]), [{ reps: "10", weight: "", done: false }]);
 });
+
+test("ticking a set carries its weight to the untouched blank sets below (first-run check)", async () => {
+  const { carryWeight } = await import("../lib/set-rows.ts");
+  const drafts = [
+    { reps: "10", weight: "50", done: true, saved: { reps: 10, weight: 50 } },
+    { reps: "10", weight: "", done: false },
+    { reps: "10", weight: "", done: false },
+    { reps: "10", weight: "", done: false },
+  ];
+  const touched = [true, false, true, false];
+  assert.deepEqual(carryWeight(drafts, touched, 0).map((row) => row.weight), ["50", "50", "", "50"]);
+  const filled = [drafts[0], { reps: "10", weight: "45", done: false }];
+  assert.deepEqual(carryWeight(filled, [true, false], 0).map((row) => row.weight), ["50", "45"]);
+});

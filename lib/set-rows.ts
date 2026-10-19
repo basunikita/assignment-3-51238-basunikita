@@ -39,3 +39,11 @@ export function addRow(rows: RowDraft[]): RowDraft[] {
   const above = rows.at(-1);
   return [...rows, above ? { reps: above.reps, weight: above.weight, done: false } : { reps: String(TARGET_REPS), weight: "", done: false }];
 }
+
+// After a set is ticked, sets below it that haven't been touched and have no weight yet start
+// at the same weight, so the first session doesn't mean typing it three times.
+export function carryWeight(rows: RowDraft[], touched: boolean[], fromIndex: number): RowDraft[] {
+  const weight = rows[fromIndex]?.weight;
+  if (!weight) return rows;
+  return rows.map((row, i) => (i > fromIndex && !touched[i] && !row.done && row.weight === "" ? { ...row, weight } : row));
+}

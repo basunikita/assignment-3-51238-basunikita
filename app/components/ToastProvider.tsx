@@ -43,7 +43,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext value={show}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 px-4">
+      <div className="pointer-events-none fixed inset-x-0 bottom-40 z-30 px-4">
         <div role="status" aria-live="polite" className="mx-auto max-w-[560px]">
           {toast && (
             <div

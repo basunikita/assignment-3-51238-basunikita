@@ -143,3 +143,17 @@ export function newBestCount(store: Store, workout: Workout): number {
     return weights.length > 0 && newBest(store, entry.exerciseId, workout.date, Math.max(...weights)) !== null;
   }).length;
 }
+
+// The line under an exercise on the day page: today's logged sets once there are any,
+// otherwise what was lifted last time.
+export function exerciseLine(store: Store, exerciseId: string, today: string, workout: Workout | undefined): string {
+  const todays = workout?.entries.find((entry) => entry.exerciseId === exerciseId)?.sets.filter(isLogged) ?? [];
+  if (todays.length) return `Today ${formatSets(todays)}`;
+  return lastTimeLine(lastSession(store, exerciseId, today));
+}
+
+// A workout's line in History: unfinished strength workouts are marked as in progress.
+export function historyLine(store: Store, workout: Workout): string {
+  const open = !workout.finishedAt && !workout.cardio;
+  return `${workoutSummary(store, workout)}${open ? " · in progress" : ""}`;
+}

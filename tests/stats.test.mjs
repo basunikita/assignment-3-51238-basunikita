@@ -179,3 +179,21 @@ test("new bests in a workout compare each exercise's heaviest set with earlier d
   const store = { ...history, workouts: [...history.workouts.filter((w) => w.date !== TODAY), today] };
   assert.equal(newBestCount(store, today), 1);
 });
+
+test("an exercise row shows today's sets once some are logged (first-run check)", async () => {
+  const { exerciseLine } = await import("../lib/stats.ts");
+  const todayWorkout = strength(TODAY, "back-biceps", [entry("face-pulls", [12, 40, true], [12, 45, true], [12, 45, false])]);
+  const store = { ...history, workouts: [...history.workouts.filter((w) => w.date !== TODAY), todayWorkout] };
+  assert.equal(exerciseLine(store, "face-pulls", TODAY, todayWorkout), "Today 12 @ 40 lb, 12 @ 45 lb");
+  assert.equal(exerciseLine(store, "barbell-curls", TODAY, todayWorkout), "Not logged yet");
+  assert.equal(exerciseLine(store, "lat-pulldowns", TODAY, todayWorkout), "Last 10 @ 50 lb, 10 @ 50 lb, 10 @ 50 lb, 10 @ 52.5 lb");
+});
+
+test("history marks a strength workout that wasn't finished as in progress (first-run check)", async () => {
+  const { historyLine } = await import("../lib/stats.ts");
+  const store = createSeed();
+  const open = strength(TODAY, "legs", [entry("rdls", [10, 60, true])]);
+  assert.equal(historyLine(store, open), "1 exercise, 1 set · in progress");
+  assert.equal(historyLine(store, { ...open, finishedAt: "2026-10-18T10:00:00.000Z" }), "1 exercise, 1 set");
+  assert.equal(historyLine(store, cardio(TODAY, "incline")), "Incline walk");
+});
