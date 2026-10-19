@@ -46,6 +46,9 @@ export const CARDIO_OPTIONS: { id: CardioOptionId; label: string; detail: string
   { id: "stairs", label: "Stairs", detail: "25 min of stairs at intensity 7", minutes: 25 },
 ];
 
+// Badges name the body part (Nikita's Assignment 2 decision).
+export const TONE_LABELS: Record<Tone, string> = { upper: "Upper body", legs: "Legs", cardio: "Cardio", rest: "Rest" };
+
 export function dayInfo(id: string): DayInfo | undefined {
   return DAYS.find((day) => day.id === id);
 }
