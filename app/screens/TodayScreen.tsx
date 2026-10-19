@@ -98,7 +98,7 @@ function Today({ store, today }: { store: Store; today: string }) {
         <StreakBadge weeks={streakWeeks(store, today)} />
         <p className="font-bold">
           Last workout:{" "}
-          <Link href={`/history/${lastWorkout.date}`} className={`${recipe.link} ${recipe.focus}`}>
+          <Link href={`/history/${lastWorkout.date}`} className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
             {lastDay?.name} · {formatDayShort(lastWorkout.date)}
           </Link>
         </p>

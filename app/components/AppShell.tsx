@@ -12,7 +12,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     <>
       <a
         href="#main"
-        className="sr-only z-40 border-2 border-ink bg-accent px-4 py-2 font-bold text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        className="sr-only z-40 border-2 border-ink bg-accent px-4 py-2 font-bold text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:inline-flex focus:min-h-11 focus:items-center"
       >
         Skip to content
       </a>

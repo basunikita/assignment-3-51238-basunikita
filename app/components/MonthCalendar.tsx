@@ -20,7 +20,7 @@ export default function MonthCalendar({ month, workoutsByDate, today, onMonthCha
   const recipe = useRecipe();
   const navButton = `${recipe.focus} grid size-11 place-items-center border-2 border-ink bg-surface font-display text-2xl font-black hover-state:bg-bg`;
   return (
-    <section aria-labelledby="calendar-heading" className={`${recipe.panel} grid gap-3`}>
+    <section aria-labelledby="calendar-heading" className="grid gap-3 border-2 border-ink bg-surface p-3">
       <div className="flex items-center justify-between gap-2">
         <button type="button" className={navButton} onClick={() => onMonthChange(-1)} aria-label="Previous month">
           <span aria-hidden="true">‹</span>
@@ -32,14 +32,14 @@ export default function MonthCalendar({ month, workoutsByDate, today, onMonthCha
           <span aria-hidden="true">›</span>
         </button>
       </div>
-      <div aria-hidden="true" className="grid grid-cols-7 gap-1 text-center">
+      <div aria-hidden="true" className="grid grid-cols-7 gap-0.5 text-center">
         {WEEKDAYS.map((letter, i) => (
           <span key={i} className={recipe.label}>
             {letter}
           </span>
         ))}
       </div>
-      <ul className="grid grid-cols-7 gap-1">
+      <ul className="grid grid-cols-7 gap-0.5">
         {monthGrid(month).map((date, i) => {
           if (!date) return <li key={`blank-${i}`} aria-hidden="true" />;
           const logged = workoutsByDate.get(date);

@@ -182,7 +182,7 @@ function HistoryDay({ store, date }: { store: Store; date: string }) {
         <StatePanel
           kind="empty"
           action={
-            <Link href="/history" className={`${recipe.link} ${recipe.focus}`}>
+            <Link href="/history" className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
               Back to History
             </Link>
           }
@@ -235,16 +235,19 @@ export default function HistoryDayScreen({ date }: { date: string }) {
   const recipe = useRecipe();
   if (!parseDateKey(date)) {
     return (
-      <StatePanel
-        kind="error"
-        action={
-          <Link href="/history" className={`${recipe.link} ${recipe.focus}`}>
-            Back to History
-          </Link>
-        }
-      >
-        That isn&apos;t a date we can show.
-      </StatePanel>
+      <>
+        <PageHeader title="Date not found" />
+        <StatePanel
+          kind="error"
+          action={
+            <Link href="/history" className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
+              Back to History
+            </Link>
+          }
+        >
+          That isn&apos;t a date we can show.
+        </StatePanel>
+      </>
     );
   }
   return <LoadGate>{({ store }) => <HistoryDay store={store} date={date} />}</LoadGate>;

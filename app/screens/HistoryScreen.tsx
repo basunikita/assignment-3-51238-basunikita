@@ -26,7 +26,7 @@ function History({ store, today }: { store: Store; today: string }) {
         <StatePanel
           kind="empty"
           action={
-            <Link href="/" className={`${recipe.link} ${recipe.focus}`}>
+            <Link href="/" className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
               Go to Today
             </Link>
           }

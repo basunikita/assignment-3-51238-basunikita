@@ -256,16 +256,19 @@ export default function LogExerciseScreen({ dayId, exerciseId }: { dayId: string
         const fitsDay = exercise && day?.kind === "strength" && (exercise.dayId === day.id || exercise.dayId === "extra");
         if (!exercise || !day || !fitsDay) {
           return (
-            <StatePanel
-              kind="error"
-              action={
-                <Link href={day?.kind === "strength" ? `/workout/${day.id}` : "/"} className={`${recipe.link} ${recipe.focus}`}>
-                  {day?.kind === "strength" ? `Back to ${day.name}` : "Back to Today"}
-                </Link>
-              }
-            >
-              We couldn&apos;t find that exercise.
-            </StatePanel>
+            <>
+              <PageHeader title="Exercise not found" />
+              <StatePanel
+                kind="error"
+                action={
+                  <Link href={day?.kind === "strength" ? `/workout/${day.id}` : "/"} className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
+                    {day?.kind === "strength" ? `Back to ${day.name}` : "Back to Today"}
+                  </Link>
+                }
+              >
+                We couldn&apos;t find that exercise.
+              </StatePanel>
+            </>
           );
         }
         return <LogExercise key={`${dayId}-${exerciseId}`} store={store} startToday={today()} day={day} exercise={exercise} />;

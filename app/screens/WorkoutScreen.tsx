@@ -198,16 +198,19 @@ export default function WorkoutScreen({ dayId }: { dayId: string }) {
   const day = dayInfo(dayId);
   if (!day) {
     return (
-      <StatePanel
-        kind="error"
-        action={
-          <Link href="/" className={`${recipe.link} ${recipe.focus}`}>
-            Back to Today
-          </Link>
-        }
-      >
-        That day isn&apos;t in your routine.
-      </StatePanel>
+      <>
+        <PageHeader title="Day not found" />
+        <StatePanel
+          kind="error"
+          action={
+            <Link href="/" className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
+              Back to Today
+            </Link>
+          }
+        >
+          That day isn&apos;t in your routine.
+        </StatePanel>
+      </>
     );
   }
   return (

@@ -21,16 +21,19 @@ function ExerciseDetail({ store, id }: { store: Store; id: string }) {
   const exercise = findExercise(store, id);
   if (!exercise) {
     return (
-      <StatePanel
-        kind="error"
-        action={
-          <Link href="/exercises" className={`${recipe.link} ${recipe.focus}`}>
-            Back to Exercises
-          </Link>
-        }
-      >
-        We couldn&apos;t find that exercise.
-      </StatePanel>
+      <>
+        <PageHeader title="Exercise not found" />
+        <StatePanel
+          kind="error"
+          action={
+            <Link href="/exercises" className={`${recipe.link} ${recipe.focus} inline-flex min-h-11 items-center`}>
+              Back to Exercises
+            </Link>
+          }
+        >
+          We couldn&apos;t find that exercise.
+        </StatePanel>
+      </>
     );
   }
 
