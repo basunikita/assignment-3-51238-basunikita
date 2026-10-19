@@ -12,7 +12,6 @@ import {
   prefillRows,
   sessionsFor,
   streakWeeks,
-  suggestedWeight,
   weekStrip,
   workoutSummary,
 } from "../lib/stats.ts";
@@ -55,13 +54,6 @@ test("best weight, optionally only before a date", () => {
   assert.equal(bestWeight(history, "face-pulls"), null);
 });
 
-test("suggestion: +5 when every set hit 10 reps, otherwise the same weight", () => {
-  assert.equal(suggestedWeight({ date: "2026-10-14", sets: rows([10, 50, true], [10, 50, true], [10, 50, true]), max: 50 }), 55);
-  assert.equal(suggestedWeight({ date: "2026-10-14", sets: rows([10, 50, true], [8, 50, true]), max: 50 }), 50);
-  assert.equal(suggestedWeight({ date: "2026-10-14", sets: rows([10, 0, true]), max: 0 }), null);
-  assert.equal(suggestedWeight(null), null);
-});
-
 test("a new best compares with earlier dates only", () => {
   const store = withWorkouts([strength("2026-10-14", "back-biceps", [entry("lat-pulldowns", [10, 50, true])])]);
   assert.deepEqual(newBest(store, "lat-pulldowns", TODAY, 55), { previous: 50 });
@@ -94,6 +86,11 @@ test("formatSets", () => {
   assert.equal(formatSets(rows([10, 50, true], [10, 55, true])), "10 @ 50 lb, 10 @ 55 lb");
   assert.equal(formatSets(rows([10, 0, true], [10, 0, true], [10, 0, true])), "3 × 10 · bodyweight");
   assert.equal(formatSets(rows([10, 52.5, true])), "1 × 10 @ 52.5 lb");
+});
+
+test("prefill: each set starts at the weight it was last time (review round 2)", () => {
+  const ramp = { date: "2026-10-14", sets: rows([10, 50, true], [10, 55, true], [10, 60, true]), max: 60 };
+  assert.deepEqual(prefillRows(ramp).map((row) => row.weight), [50, 55, 60]);
 });
 
 test("prefill: last time's sets by position, at least three rows, nothing ticked", () => {
@@ -166,8 +163,9 @@ test("a gap week breaks the streak", () => {
 test("the last-time line on a workout's exercise rows", async () => {
   const { lastTimeLine } = await import("../lib/stats.ts");
   assert.equal(lastTimeLine(null), "Not logged yet");
-  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [10, 50, true], [10, 50, true]), max: 50 }), "Last 3 × 10 @ 50 lb · try 55");
-  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [8, 50, true]), max: 50 }), "Last 10, 8 @ 50 lb · try 50");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [10, 50, true], [10, 50, true]), max: 50 }), "Last 3 × 10 @ 50 lb");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [8, 50, true]), max: 50 }), "Last 10, 8 @ 50 lb");
+  assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 50, true], [10, 55, true], [10, 60, true]), max: 60 }), "Last 10 @ 50 lb, 10 @ 55 lb, 10 @ 60 lb");
   assert.equal(lastTimeLine({ date: "2026-10-14", sets: rows([10, 0, true], [10, 0, true], [10, 0, true]), max: 0 }), "Last 3 × 10 · bodyweight");
 });
 

@@ -3,8 +3,6 @@ import type { CardioOptionId, DayId, StrengthDayId, Tone } from "./types.ts";
 // Nikita's routine from Assignment 2: every strength exercise is 3 sets of 10.
 export const TARGET_SETS = 3;
 export const TARGET_REPS = 10;
-// The suggested weight goes up by this much when every set reached its reps.
-export const WEIGHT_STEP = 5;
 
 export type DayInfo = { id: DayId; name: string; tone: Tone; kind: "strength" | "cardio" | "rest" };
 

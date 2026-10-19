@@ -5,7 +5,7 @@ It saves to the browser (localStorage), so it remembers me on this device with n
 
 **Main task, as one sentence:**
 I pick today's day → I log each set as I finish it → I come back next week and it shows what I
-lifted last time, suggests what to try, and my chart is going up.
+lifted last time, set by set, and my chart is going up.
 
 ## All three flows
 
@@ -16,7 +16,7 @@ flowchart TD
   B -- Yes --> D["Welcome back: week strip, streak, last workout"]
   C --> E[Pick day]
   D --> E
-  E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb · try 55'"]
+  E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb'"]
   E -- Cardio --> G["Pick which of my four cardio options I did"] --> S
   E -- Rest --> R["Rest day: week strip and link to history"]
   F --> H["Log exercise: 3 set rows filled in, chart of past max weights"]
@@ -39,7 +39,7 @@ flowchart TD
 
 ## 2. Main task — log each set between sets
 
-- The workout lists that day's exercises in order, each showing last time and a suggestion.
+- The workout lists that day's exercises in order, each showing what I lifted last time.
 - An exercise opens with three set rows filled in from last time. One tap ✓ per set, or change the
   number first. A rest timer starts after each ✓.
 - Errors sit under the field and say what to do ("Enter the weight you lifted, in lb."), and
@@ -51,7 +51,7 @@ flowchart TD
 
 - Welcome back with a week strip (trained days in blue for upper body, red for legs, green for
   cardio) and a weeks-in-a-row streak.
-- Each exercise shows "Last 3×10 @ 50 lb" and suggests +5 lb when I hit every rep last time.
+- Each exercise shows "Last 3×10 @ 50 lb", and its sets start at last time's weights (50, 55, 60).
 - A max-weight chart for each exercise, and a "New best" note when I beat a record.
 - History by day, where I can edit or delete anything, with Undo.
 - Exercises: weight history, chart and bests, plus a form to add new exercises.
@@ -62,7 +62,7 @@ flowchart TD
 |---|---|
 | `/` | Today: first visit or welcome back, week strip, streak, day picker |
 | `/workout/[day]` | The picked day: exercise list, cardio picker or rest day |
-| `/workout/[day]/[exercise]` | Log sets, rest timer, last time, suggestion, chart |
+| `/workout/[day]/[exercise]` | Log sets, rest timer, last time, chart |
 | `/history` | Past workouts by day |
 | `/history/[date]` | One day: edit or delete, with Undo |
 | `/exercises` | All exercises and bests |

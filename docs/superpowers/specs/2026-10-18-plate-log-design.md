@@ -139,7 +139,7 @@ exist in the browser.
 **Strength days:**
 - **The exercise list:** one row per exercise, in routine order.
   - Each row has the exercise name and a line about last time:
-    - "Last 3 × 10 @ 50 lb · try 55" (the suggestion follows §6.1);
+    - "Last 3 × 10 @ 50 lb" (or "Last 10 @ 50 lb, 10 @ 55 lb, 10 @ 60 lb" when the weights differ);
     - or "Not logged yet";
     - or "Last 3 × 10 · bodyweight".
   - Each row shows today's progress: "1/3 sets", or a black DONE badge when all of today's sets
@@ -173,11 +173,12 @@ back to Today.
 
 **Header:** back link "← Back and biceps" (the day), the `h1` with the exercise name, and its badge.
 
-**Last time and the suggestion:**
+**Last time:**
 - With history: "Last time · Oct 14: 3 × 10 @ 50 lb".
-- If §6.1 gives a suggestion, a secondary button **"Use 55 lb"** fills 55 into the weight of every
-  set not yet ticked.
 - With no history: "First time. Pick a weight you can lift 10 times."
+- **No suggested weight and no "Use 55 lb" button.** Nikita removed them in review round 2 on
+  2026-10-18. Each set starts at the weight it was last time (50, 55, 60), and she changes it
+  herself.
 
 **Set rows** (start with 3):
 - Each row has "SET 1", then **Reps** (`inputmode="numeric"`) and **Weight (lb)**
@@ -366,12 +367,11 @@ type Workout = {
 
 ## 6. Coming back
 
-### 6.1 Last time and the suggested weight
+### 6.1 Last time
 - **Last session** for an exercise is the most recent date *before today* with a logged set.
-- **The suggestion (Claude's call):**
-  - If every logged set that day reached 10 reps, suggest that day's max weight + 5 lb.
-  - Otherwise suggest the same max weight.
-  - There's no suggestion when there's no history, or when the max weight was 0 (bodyweight).
+- **Filling in:** today's rows start from it set by set. Set 1 gets last time's set 1 reps and
+  weight, set 2 gets set 2, and so on.
+- **No suggested next weight.** Nikita removed it in review round 2, 2026-10-18.
 
 ### 6.2 The max-weight chart
 - One point per date: the heaviest logged set on that date (all of that day's workouts together).
@@ -421,7 +421,7 @@ the field and are announced with `role="alert"` on the first failure. What was t
 - It replaces the plan's "Enter a weight above 0", because some routine exercises use no weight:
   hyperextensions, and O movements / serving platters.
 - 0 lb shows as "bodyweight" in last time, bests and history.
-- A bodyweight-only exercise gets no suggestion and no chart line. Its chart area says "Bodyweight
+- A bodyweight-only exercise gets no chart line. Its chart area says "Bodyweight
   exercise: no weight to chart."
 
 ## 8. Shared components
@@ -476,7 +476,7 @@ Plate Room recipe:
 - storage: unreadable data and no-storage fallback;
 - local date formatting;
 - continue-it lookup;
-- last session, best and suggestion, including bodyweight;
+- last session, best and set-by-set prefill, including bodyweight;
 - chart series;
 - week strip and streak, including midweek and gap weeks;
 - set and form checks with their exact messages;
@@ -489,9 +489,9 @@ Plate Room recipe:
 **Sample history for reviews (Claude's call after the builder check):** the coming-back screens
 need workouts dated before today. A **development-only** page at `/dev/sample` fills them in.
 - It returns "not found" outside `next dev`, so the live site's first visit stays clean.
-- **What it loads:** three weeks of past workouts for Nikita's routine, with weights climbing 5 lb
-  at a time, a missed week, and one bodyweight exercise. That makes "last time", the suggestion,
-  the new-best banner, the chart, the week strip and the streak all visible in review rounds.
+- **What it loads:** three weeks of past workouts for Nikita's routine. Each set climbs 5 lb (50,
+  55, 60) and each week starts higher. There's a missed week and some bodyweight exercises. That
+  makes "last time" with set-by-set prefill, the new-best banner, the chart, the week strip and the streak all visible in review rounds.
 - **"Load sample history":** keeps the current data under `plate-log:backup-<timestamp>`, then
   replaces it.
 - **"Clear everything":** goes back to a first visit.
@@ -510,8 +510,8 @@ need workouts dated before today. A **development-only** page at `/dev/sample` f
 4. **Finish workout.** The toast appears, and `/` shows the welcome back, week strip and streak of 1.
 5. **Second session.** In dev, open `/dev/sample` and load sample history (or put a past-dated
    workout in test data).
-   - Lat pulldowns shows "Last time · …: 3 × 10 @ 50 lb" and **Use 55 lb**.
-   - Ticking 55 shows "New best: 55 lb (was 50 lb)".
+   - Lat pulldowns shows "Last time · …" and its sets prefilled at last time's weights, set by set.
+   - Ticking a heavier set shows "New best: … lb (was … lb)".
    - The chart has 2 points and a caption.
 6. **History:**
    - It shows both dates.

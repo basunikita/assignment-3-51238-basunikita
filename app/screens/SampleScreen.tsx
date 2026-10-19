@@ -33,7 +33,7 @@ export default function SampleScreen() {
   return (
     <>
       <PageHeader eyebrow="For reviews only" title="Sample history" meta="Your current log is backed up in this browser first." />
-      <p>Loads three weeks of past workouts (with a missed week) so you can see last time, suggested weights, new bests, the chart, the week strip and the streak.</p>
+      <p>Loads three weeks of past workouts (with a missed week) so you can see last time (each set prefilled at its old weight), new bests, the chart, the week strip and the streak.</p>
       <Button onClick={loadSample}>Load sample history</Button>
       <Button variant="secondary" onClick={clearAll}>
         Clear everything (back to a first visit)

@@ -1,5 +1,5 @@
 import { addDays, formatLong, formatShort, parseDateKey, weekStart } from "./dates.ts";
-import { CARDIO_OPTIONS, dayInfo, TARGET_REPS, TARGET_SETS, WEIGHT_STEP } from "./routine.ts";
+import { CARDIO_OPTIONS, dayInfo, TARGET_REPS, TARGET_SETS } from "./routine.ts";
 import type { SetRow, Store, Tone, Workout } from "./types.ts";
 import { countsAsWorkout, isLogged } from "./workouts.ts";
 
@@ -39,12 +39,6 @@ export function lastSession(store: Store, exerciseId: string, today: string): Se
 export function bestWeight(store: Store, exerciseId: string, beforeDate?: string): number | null {
   const sessions = sessionsFor(store, exerciseId).filter((session) => beforeDate === undefined || session.date < beforeDate);
   return sessions.length ? Math.max(...sessions.map((session) => session.max)) : null;
-}
-
-export function suggestedWeight(last: Session | null): number | null {
-  if (!last || last.max === 0) return null;
-  const hitEveryRep = last.sets.every((set) => (set.reps ?? 0) >= TARGET_REPS);
-  return hitEveryRep ? last.max + WEIGHT_STEP : last.max;
 }
 
 export function newBest(store: Store, exerciseId: string, today: string, weight: number): { previous: number } | null {
@@ -137,11 +131,9 @@ export function streakWeeks(store: Store, today: string): number {
   return streak;
 }
 
-// The line under an exercise on the workout page: what you did last time and what to try.
+// The line under an exercise on the workout page: what you did last time.
 export function lastTimeLine(last: Session | null): string {
-  if (!last) return "Not logged yet";
-  const suggestion = suggestedWeight(last);
-  return `Last ${formatSets(last.sets)}${suggestion === null ? "" : ` · try ${suggestion}`}`;
+  return last ? `Last ${formatSets(last.sets)}` : "Not logged yet";
 }
 
 // How many exercises in this workout beat their best from earlier dates.

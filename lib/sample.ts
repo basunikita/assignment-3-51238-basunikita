@@ -1,8 +1,11 @@
 import { addDays, weekStart } from "./dates.ts";
 import { exercisesForDay } from "./exercises.ts";
-import { TARGET_REPS, TARGET_SETS, WEIGHT_STEP } from "./routine.ts";
+import { TARGET_REPS, TARGET_SETS } from "./routine.ts";
 import { createSeed } from "./seed.ts";
 import type { CardioOptionId, SetRow, StrengthDayId, Store, Workout } from "./types.ts";
+
+// Each set climbs by this much within a session, and each session starts this much higher.
+const STEP = 5;
 
 // Starting weights for the sample (lb). Missing exercises are bodyweight (0).
 const START_WEIGHTS: Record<string, number> = {
@@ -35,8 +38,8 @@ const CARDIO_ROTATION: CardioOptionId[] = ["incline", "run", "stairs", "interval
 // Weeks before the current one: four weeks ago, then a missed week, then the last two.
 const WEEKS_BACK = [4, 2, 1];
 
-// Three weeks of past workouts so review rounds can see "last time", the suggestion, new bests,
-// the chart, the week strip and the streak. Nothing is dated in the current week.
+// Three weeks of past workouts so review rounds can see "last time" (sets prefilled 50, 55, 60),
+// new bests, the chart, the week strip and the streak. Nothing is dated in the current week.
 export function createSampleStore(today: string, newId: () => string): Store {
   const seed = createSeed();
   const thisWeek = weekStart(today);
@@ -53,13 +56,11 @@ export function createSampleStore(today: string, newId: () => string): Store {
       }
       const entries = exercisesForDay(seed, dayId).map((exercise) => {
         const start = START_WEIGHTS[exercise.id] ?? 0;
-        const weight = start === 0 ? 0 : start + WEIGHT_STEP * session;
-        // The middle session of Lat pulldowns misses reps on the last set, so the next
-        // suggestion stays at the same weight before climbing again.
+        // The middle session of Lat pulldowns misses reps on the last set.
         const missedReps = exercise.id === "lat-pulldowns" && session === 1;
         const sets: SetRow[] = Array.from({ length: TARGET_SETS }, (_, i) => ({
           reps: missedReps && i === TARGET_SETS - 1 ? TARGET_REPS - 2 : TARGET_REPS,
-          weight,
+          weight: start === 0 ? 0 : start + STEP * session + STEP * i,
           done: true,
         }));
         return { exerciseId: exercise.id, sets };

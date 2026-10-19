@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { formatShort } from "@/lib/dates";
 import { findExercise } from "@/lib/exercises";
 import { TONE_LABELS, dayInfo, type DayInfo } from "@/lib/routine";
-import { chartSummary, formatSets, lastSession, maxWeightSeries, newBest, prefillRows, suggestedWeight } from "@/lib/stats";
+import { chartSummary, formatSets, lastSession, maxWeightSeries, newBest, prefillRows } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
 import type { Exercise, SetRow, Settings, StrengthDayId, Store } from "@/lib/types";
 import { checkReps, checkWeight } from "@/lib/validation";
@@ -56,7 +56,6 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
   const { update, today } = useStore();
   const dayId = day.id as StrengthDayId;
   const last = lastSession(store, exercise.id, startToday);
-  const suggestion = suggestedWeight(last);
 
   const [rows, setRows] = useState<RowDraft[]>(() => {
     const saved = findWorkout(store, startToday, dayId)?.entries.find((entry) => entry.exerciseId === exercise.id);
@@ -160,11 +159,6 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
     });
   };
 
-  const applySuggestion = (weight: number) => {
-    const next = rows.map((row) => (row.done ? row : { ...row, weight: String(weight) }));
-    commit(next, touched, errors.map((rowErrors, i) => (rows[i].done ? rowErrors : { ...rowErrors, weight: undefined })));
-  };
-
   const setRest = (value: string) => {
     update((current) => ({ ...current, settings: { restSeconds: Number(value) as Settings["restSeconds"] } }));
   };
@@ -183,15 +177,6 @@ function LogExercise({ store, startToday, day, exercise }: { store: Store; start
           </p>
         ) : (
           <p className="text-lg font-bold">First time. Pick a weight you can lift 10 times.</p>
-        )}
-        {suggestion !== null && (
-          <button
-            type="button"
-            onClick={() => applySuggestion(suggestion)}
-            className={`${recipe.button.base} ${recipe.button.secondary} ${recipe.focus} self-start`}
-          >
-            Use {suggestion} lb
-          </button>
         )}
       </section>
 

@@ -14,7 +14,7 @@ It reuses the **Plate Room** style and my workout routine from Assignment 2.
 ## Flows
 
 **Main task:** I pick today's day → I log each set as I finish it → I come back next week and it
-shows what I lifted last time, suggests what to try, and my chart is going up.
+shows what I lifted last time, set by set, and my chart is going up.
 
 ```mermaid
 flowchart TD
@@ -23,7 +23,7 @@ flowchart TD
   B -- Yes --> D["Welcome back: week strip, streak, last workout"]
   C --> E[Pick day]
   D --> E
-  E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb · try 55'"]
+  E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb'"]
   E -- Cardio --> G["Pick which of my four cardio options I did"] --> S
   E -- Rest --> R["Rest day: week strip and link to history"]
   F --> H["Log exercise: 3 set rows filled in, chart of past max weights"]
@@ -44,9 +44,8 @@ See [`flows.md`](flows.md) for what happens on each step and the list of pages.
 
 Before designing the first visit, agents studied three browser-based trackers that need no
 account — Liftosaur, Setly and TrackMySet — by using each one as a brand-new user. All three
-drop you on an empty screen, none of them shows a single form error, and none suggests a next
-weight. So Plate Log opens with my routine already loaded, explains every error next to the
-field, and suggests what to lift next. Details and screenshots:
+drop you on an empty screen, and none of them shows a single form error. So Plate Log opens with
+my routine already loaded and explains every error next to the field. Details and screenshots:
 [`docs/research/onboarding.md`](docs/research/onboarding.md).
 
 ## First-run check
