@@ -1,26 +1,34 @@
 @import "tailwindcss";
+@source not "../docs";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* State variants from the Assignment 2 design system; hover only applies on devices that hover. */
+@custom-variant hover-state {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &[data-state~="hover"] {
+    @slot;
   }
 }
+@custom-variant focus-state (&:focus-visible, &[data-state~="focus"]);
+@custom-variant pressed-state (&:active, &[data-state~="pressed"]);
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Theme tokens: the root element sets --mood-* (moodStyle in app/theme.ts). */
+@theme inline {
+  --color-bg: var(--mood-bg);
+  --color-surface: var(--mood-surface);
+  --color-ink: var(--mood-ink);
+  --color-muted: var(--mood-muted);
+  --color-line: var(--mood-line);
+  --color-accent: var(--mood-accent);
+  --color-on-accent: var(--mood-on-accent);
+  --color-focus: var(--mood-focus);
+  --color-control: var(--mood-control);
+  --font-display: var(--mood-font-display);
+  --font-body: var(--mood-font-body);
+  --font-label: var(--mood-font-label);
+  --font-numbers: var(--mood-font-numbers);
+  --radius-tile: var(--mood-radius);
 }
