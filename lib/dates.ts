@@ -50,3 +50,29 @@ export function formatLong(key: string): string {
   const date = mustParse(key);
   return `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`;
 }
+
+// Months are "YYYY-MM".
+export function monthOf(key: string): string {
+  return key.slice(0, 7);
+}
+
+export function addMonths(month: string, months: number): string {
+  const [year, monthIndex] = month.split("-").map(Number);
+  const date = new Date(year, monthIndex - 1 + months, 1);
+  return toDateKey(date).slice(0, 7);
+}
+
+export function formatMonth(month: string): string {
+  const date = mustParse(`${month}-01`);
+  return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+// A Monday-first calendar: null for the blank cells before the 1st and after the last day.
+export function monthGrid(month: string): (string | null)[] {
+  const first = `${month}-01`;
+  const blanksBefore = (mustParse(first).getDay() + 6) % 7;
+  const cells: (string | null)[] = Array.from({ length: blanksBefore }, () => null);
+  for (let key = first; monthOf(key) === month; key = addDays(key, 1)) cells.push(key);
+  while (cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}

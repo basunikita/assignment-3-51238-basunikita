@@ -38,3 +38,22 @@ test("dates read the way the pages show them", () => {
   assert.equal(formatLong("2026-10-15"), "Thursday, October 15");
   assert.equal(formatLong("2026-10-18"), "Sunday, October 18");
 });
+
+test("a month grid starts on Monday with blanks before the 1st", async () => {
+  const { monthGrid } = await import("../lib/dates.ts");
+  const october = monthGrid("2026-10"); // October 1, 2026 is a Thursday
+  assert.deepEqual(october.slice(0, 4), [null, null, null, "2026-10-01"]);
+  assert.equal(october.filter(Boolean).length, 31);
+  assert.equal(october.filter(Boolean).at(-1), "2026-10-31");
+  assert.equal(october.length % 7, 0); // padded to whole weeks
+  const june = monthGrid("2026-06"); // June 1, 2026 is a Monday
+  assert.equal(june[0], "2026-06-01");
+});
+
+test("months step and read as names", async () => {
+  const { addMonths, formatMonth, monthOf } = await import("../lib/dates.ts");
+  assert.equal(addMonths("2026-10", 1), "2026-11");
+  assert.equal(addMonths("2026-01", -1), "2025-12");
+  assert.equal(formatMonth("2026-10"), "October 2026");
+  assert.equal(monthOf("2026-10-18"), "2026-10");
+});
