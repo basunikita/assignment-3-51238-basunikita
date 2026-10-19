@@ -8,7 +8,6 @@ export const MESSAGES = {
   weightEmpty: "Enter the weight you lifted, in lb.",
   weightRange: "Enter a weight of 0 or more (0 for bodyweight).",
   weightMax: "Enter a weight under 1,000 lb.",
-  minutes: "Enter how many minutes you did, from 1 to 300.",
   cardioOption: "Choose which cardio you did.",
   finishEmpty: "Tick at least one set before finishing.",
   nameEmpty: "Enter a name for the exercise.",
@@ -22,7 +21,6 @@ export type Checked = { value: number | null; error: string | null };
 const NAME_LIMIT = 60;
 const MAX_REPS = 100;
 const MAX_WEIGHT = 1000;
-const MAX_MINUTES = 300;
 const FORM_DAYS = new Set(["back-biceps", "shoulders-triceps", "legs", "extra"]);
 
 // Plain decimal numbers only; a comma works as the decimal point.
@@ -40,10 +38,6 @@ function checkWholeNumber(raw: string, max: number, emptyError: string, rangeErr
 
 export function checkReps(raw: string): Checked {
   return checkWholeNumber(raw, MAX_REPS, MESSAGES.repsEmpty, MESSAGES.repsRange);
-}
-
-export function checkMinutes(raw: string): Checked {
-  return checkWholeNumber(raw, MAX_MINUTES, MESSAGES.minutes, MESSAGES.minutes);
 }
 
 // 0 is bodyweight; half-pound steps are allowed.

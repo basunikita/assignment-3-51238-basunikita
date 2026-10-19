@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createSeed } from "../lib/seed.ts";
-import { checkExerciseForm, checkMinutes, checkReps, checkWeight, MESSAGES, parseNumber, safeReturnTo } from "../lib/validation.ts";
+import { checkExerciseForm, checkReps, checkWeight, MESSAGES, parseNumber, safeReturnTo } from "../lib/validation.ts";
 
 test("messages say what to do next", () => {
   assert.equal(MESSAGES.repsEmpty, "Enter how many reps you did.");
@@ -9,7 +9,7 @@ test("messages say what to do next", () => {
   assert.equal(MESSAGES.weightEmpty, "Enter the weight you lifted, in lb.");
   assert.equal(MESSAGES.weightRange, "Enter a weight of 0 or more (0 for bodyweight).");
   assert.equal(MESSAGES.weightMax, "Enter a weight under 1,000 lb.");
-  assert.equal(MESSAGES.minutes, "Enter how many minutes you did, from 1 to 300.");
+  assert.equal("minutes" in MESSAGES, false); // cardio has no minutes field (review round 1)
   assert.equal(MESSAGES.cardioOption, "Choose which cardio you did.");
   assert.equal(MESSAGES.finishEmpty, "Tick at least one set before finishing.");
   assert.equal(MESSAGES.nameEmpty, "Enter a name for the exercise.");
@@ -48,11 +48,6 @@ test("reps are whole numbers from 1 to 100", () => {
   assert.equal(checkReps(" 8 ").value, 8);
   assert.equal(checkReps("").error, MESSAGES.repsEmpty);
   for (const bad of ["0", "101", "8.5", "x", "-3"]) assert.equal(checkReps(bad).error, MESSAGES.repsRange, bad);
-});
-
-test("minutes are whole numbers from 1 to 300", () => {
-  assert.deepEqual(checkMinutes("35"), { value: 35, error: null });
-  for (const bad of ["", "0", "301", "2.5", "abc"]) assert.equal(checkMinutes(bad).error, MESSAGES.minutes, bad);
 });
 
 test("the add-exercise form", () => {

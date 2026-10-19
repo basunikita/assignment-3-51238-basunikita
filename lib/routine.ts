@@ -39,11 +39,11 @@ export const ROUTINE_EXERCISES: Record<StrengthDayId, string[]> = {
   legs: ["Hip thrusts", "RDLs", "Bulgarian split squats", "Hip abduction / adduction", "Glute hyperextensions"],
 };
 
-export const CARDIO_OPTIONS: { id: CardioOptionId; label: string; detail: string; minutes: number }[] = [
-  { id: "run", label: "Run 30 min", detail: "Walk 5 min, run 30 min, walk 5 min", minutes: 40 },
-  { id: "intervals", label: "Run–walk intervals", detail: "Walk 5 min, (run 15 min, walk 1 min) × 3, walk 5 min", minutes: 58 },
-  { id: "incline", label: "Incline walk", detail: "30 min walking at level 12 incline, 3 mph", minutes: 30 },
-  { id: "stairs", label: "Stairs", detail: "25 min of stairs at intensity 7", minutes: 25 },
+export const CARDIO_OPTIONS: { id: CardioOptionId; label: string; detail: string }[] = [
+  { id: "run", label: "Run 30 min", detail: "Walk 5 min, run 30 min, walk 5 min" },
+  { id: "intervals", label: "Run–walk intervals", detail: "Walk 5 min, (run 15 min, walk 1 min) × 3, walk 5 min" },
+  { id: "incline", label: "Incline walk", detail: "30 min walking at level 12 incline, 3 mph" },
+  { id: "stairs", label: "Stairs", detail: "25 min of stairs at intensity 7" },
 ];
 
 // Badges name the body part (Nikita's Assignment 2 decision).

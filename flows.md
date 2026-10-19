@@ -17,7 +17,7 @@ flowchart TD
   C --> E[Pick day]
   D --> E
   E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb · try 55'"]
-  E -- Cardio --> G["Pick cardio option; minutes filled in"] --> S
+  E -- Cardio --> G["Pick which of my four cardio options I did"] --> S
   E -- Rest --> R["Rest day: week strip and link to history"]
   F --> H["Log exercise: 3 set rows filled in, chart of past max weights"]
   H --> I{Valid?}
@@ -44,7 +44,7 @@ flowchart TD
   number first. A rest timer starts after each ✓.
 - Errors sit under the field and say what to do ("Enter the weight you lifted, in lb."), and
   what I typed stays put.
-- Cardio days: pick one of my four options; the minutes are filled in and editable.
+- Cardio days: pick which of my four options I did, and save. There's nothing else to fill in.
 - Reopening the same day on the same date continues that workout.
 
 ## 3. Coming back — it remembers

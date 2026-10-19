@@ -84,7 +84,7 @@ strength exercise is 3 sets × 10 reps.
 | `back-biceps` | Back and biceps | upper (blue) | Lat pulldowns · Face pulls · Single-arm dumbbell rows · Lower back hyperextensions · African bicep curls · Cable bicep curls · Barbell curls |
 | `shoulders-triceps` | Shoulders and triceps | upper (blue) | Cable lateral raise · Shoulder superset: O movements and serving platters · Archer pull · Front raise cable · Overhead tricep extension cable · Tricep cross extension · Tricep press |
 | `legs` | Legs | legs (red) | Hip thrusts · RDLs · Bulgarian split squats · Hip abduction / adduction · Glute hyperextensions |
-| `cardio` | Cardio | cardio (green) | Run 30 min (40 min total: walk 5, run 30, walk 5) · Run–walk intervals (58 min: walk 5, (run 15, walk 1) × 3, walk 5) · Incline walk (30 min) · Stairs (25 min) |
+| `cardio` | Cardio | cardio (green) | Run 30 min (walk 5, run 30, walk 5) · Run–walk intervals (walk 5, (run 15, walk 1) × 3, walk 5) · Incline walk (30 min at level 12, 3 mph) · Stairs (25 min at intensity 7) |
 | `rest` | Rest | rest (ink) | none |
 
 **Days (Claude's call):** the routine's three cardio days are the same workout, so the day picker
@@ -156,15 +156,12 @@ exist in the browser.
 **Cardio:**
 - **A radio group** ("Which cardio did you do?") of four cards, each with the option name and its
   steps.
-- **Minutes**, a number field with the label "Minutes". It fills in with the chosen option's total
-  (40 / 58 / 30 / 25) and changes when the choice changes, unless she has typed in it.
+- **No minutes field.** Nikita removed it in review round 1 on 2026-10-18: picking the option is
+  the whole log.
 - **Save cardio** (primary) saves the workout and finishes it, goes to `/`, and shows the toast
-  "Cardio saved · Incline walk, 30 min".
-- **Errors:**
-  - No option chosen: "Choose which cardio you did."
-  - Minutes empty, not a whole number, or outside 1–300: "Enter how many minutes you did, from
-    1 to 300."
-- **Reopening** the same date shows the saved choice and minutes, and **Save cardio** updates them.
+  "Cardio saved · Incline walk".
+- **Error:** if no option is chosen, "Choose which cardio you did."
+- **Reopening** the same date shows the saved choice, and **Save cardio** updates it.
 
 **Rest:** the shared empty state: "Rest day: nothing to log. Enjoy it." It shows the week strip, a
 link "See your history", and no primary button.
@@ -234,7 +231,7 @@ back to Today.
 
 **List under the calendar:**
 - Every date with a workout, newest first: "Thu, Oct 16 · Legs · 5 exercises, 15 sets", or "Sat,
-  Oct 18 · Cardio · Incline walk, 30 min".
+  Oct 18 · Cardio · Incline walk".
 - Each row is a link to `/history/[date]`.
 
 **Empty:** the shared empty state: "No workouts yet. Log your first one from Today." It links to `/`.
@@ -250,7 +247,7 @@ back to Today.
     loses focus.
   - Only ticked sets are shown, and each has "Remove set". Sets that were typed but never ticked
     aren't history, so they don't appear (§5).
-- **Cardio:** the same radio group and Minutes field, plus "Save changes".
+- **Cardio:** the same radio group, plus "Save changes".
 - **"Delete workout"** (secondary) on every card removes it right away. A toast says "Deleted Legs
   workout" with an **Undo** button.
 
@@ -325,7 +322,7 @@ type Workout = {
   date: string;          // local YYYY-MM-DD, from the device's date (never toISOString)
   dayId: DayId;          // "back-biceps" | "shoulders-triceps" | "legs" | "cardio"
   entries: { exerciseId: string; sets: { reps: number | null; weight: number | null; done: boolean }[] }[];
-  cardio?: { optionId: "run" | "intervals" | "incline" | "stairs"; minutes: number };
+  cardio?: { optionId: "run" | "intervals" | "incline" | "stairs" };
   finishedAt?: string;   // ISO timestamp
 };
 ```
@@ -523,7 +520,7 @@ need workouts dated before today. A **development-only** page at `/dev/sample` f
    - An empty name gives its error. "Face pulls" gives the duplicate error.
    - "Leg press" + Any day (extra) saves.
    - It appears under Extras on every strength day.
-8. **Cardio:** pick Incline walk. Minutes fill in as 30; change it to 35 and save.
+8. **Cardio:** pick Incline walk and save. Reopening Cardio shows it chosen.
 9. **The whole flow with only the keyboard**, with no horizontal scroll at 390px.
 
 ## 12. Shipping

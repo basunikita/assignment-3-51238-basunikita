@@ -13,7 +13,7 @@ export type Workout = {
   date: string;
   dayId: Exclude<DayId, "rest">;
   entries: Entry[];
-  cardio?: { optionId: CardioOptionId; minutes: number };
+  cardio?: { optionId: CardioOptionId };
   finishedAt?: string;
 };
 

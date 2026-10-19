@@ -69,7 +69,7 @@ test("a workout counts once it has a logged set or cardio", () => {
   assert.equal(countsAsWorkout(findWorkout(ticked, DAY, "back-biceps")), true);
   const unticked = lat(ticked, rows([10, 0, false]));
   assert.equal(countsAsWorkout(findWorkout(unticked, DAY, "back-biceps")), false);
-  const cardio = saveCardio(createSeed(), { date: DAY, optionId: "incline", minutes: 30, newId, nowIso: "2026-10-18T10:00:00.000Z" });
+  const cardio = saveCardio(createSeed(), { date: DAY, optionId: "incline", newId, nowIso: "2026-10-18T10:00:00.000Z" });
   assert.equal(countsAsWorkout(findWorkout(cardio, DAY, "cardio")), true);
 });
 
@@ -82,12 +82,12 @@ test("finishing records the time and keeps the workout editable", () => {
   assert.equal(findWorkout(edited, DAY, "back-biceps").finishedAt, "2026-10-18T10:00:00.000Z");
 });
 
-test("saving cardio twice on a date updates one finished workout", () => {
-  let store = saveCardio(createSeed(), { date: DAY, optionId: "incline", minutes: 30, newId, nowIso: "2026-10-18T10:00:00.000Z" });
-  store = saveCardio(store, { date: DAY, optionId: "stairs", minutes: 35, newId, nowIso: "2026-10-18T11:00:00.000Z" });
+test("saving cardio twice on a date updates one finished workout with the latest choice", () => {
+  let store = saveCardio(createSeed(), { date: DAY, optionId: "incline", newId, nowIso: "2026-10-18T10:00:00.000Z" });
+  store = saveCardio(store, { date: DAY, optionId: "stairs", newId, nowIso: "2026-10-18T11:00:00.000Z" });
   assert.equal(store.workouts.length, 1);
   const workout = findWorkout(store, DAY, "cardio");
-  assert.deepEqual(workout.cardio, { optionId: "stairs", minutes: 35 });
+  assert.deepEqual(workout.cardio, { optionId: "stairs" });
   assert.equal(workout.finishedAt, "2026-10-18T10:00:00.000Z");
 });
 
@@ -97,14 +97,14 @@ test("history edits change sets and cardio in place", () => {
   store = updateSets(store, id, "lat-pulldowns", rows([10, 52.5, true]));
   assert.deepEqual(findWorkout(store, DAY, "back-biceps").entries[0].sets, rows([10, 52.5, true]));
 
-  let cardio = saveCardio(createSeed(), { date: DAY, optionId: "incline", minutes: 30, newId, nowIso: "2026-10-18T10:00:00.000Z" });
-  cardio = updateCardio(cardio, findWorkout(cardio, DAY, "cardio").id, { optionId: "run", minutes: 40 });
-  assert.deepEqual(findWorkout(cardio, DAY, "cardio").cardio, { optionId: "run", minutes: 40 });
+  let cardio = saveCardio(createSeed(), { date: DAY, optionId: "incline", newId, nowIso: "2026-10-18T10:00:00.000Z" });
+  cardio = updateCardio(cardio, findWorkout(cardio, DAY, "cardio").id, { optionId: "run" });
+  assert.deepEqual(findWorkout(cardio, DAY, "cardio").cardio, { optionId: "run" });
 });
 
 test("delete then restore puts the workout back where it was", () => {
   let store = lat(createSeed(), rows([10, 50, true]));
-  store = saveCardio(store, { date: DAY, optionId: "incline", minutes: 30, newId, nowIso: "2026-10-18T10:00:00.000Z" });
+  store = saveCardio(store, { date: DAY, optionId: "incline", newId, nowIso: "2026-10-18T10:00:00.000Z" });
   store = saveEntry(store, { date: "2026-10-19", dayId: "legs", exerciseId: "rdls", sets: rows([10, 60, true]), newId });
   const before = store.workouts.map((w) => w.id);
   const { store: after, removed } = deleteWorkout(store, before[1]);
@@ -135,6 +135,6 @@ test("operations never change the store they are given", () => {
     finishWorkout(store, id, "2026-10-18T10:00:00.000Z");
     updateSets(store, id, "lat-pulldowns", rows([8, 50, true]));
     deleteWorkout(store, id);
-    saveCardio(store, { date: DAY, optionId: "run", minutes: 40, newId, nowIso: "2026-10-18T10:00:00.000Z" });
+    saveCardio(store, { date: DAY, optionId: "run", newId, nowIso: "2026-10-18T10:00:00.000Z" });
   });
 });

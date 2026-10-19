@@ -22,14 +22,14 @@ test("the routine has five days in order with their tones", () => {
   assert.equal(dayInfo("nope"), undefined);
 });
 
-test("cardio options carry their total minutes", () => {
+test("cardio options are the four from the routine", () => {
   assert.deepEqual(
-    CARDIO_OPTIONS.map((option) => [option.id, option.label, option.minutes]),
+    CARDIO_OPTIONS.map((option) => [option.id, option.label]),
     [
-      ["run", "Run 30 min", 40],
-      ["intervals", "Run–walk intervals", 58],
-      ["incline", "Incline walk", 30],
-      ["stairs", "Stairs", 25],
+      ["run", "Run 30 min"],
+      ["intervals", "Run–walk intervals"],
+      ["incline", "Incline walk"],
+      ["stairs", "Stairs"],
     ],
   );
 });

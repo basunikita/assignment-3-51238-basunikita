@@ -94,7 +94,7 @@ export function exerciseProgress(workout: Workout | undefined, exerciseId: strin
 export function workoutSummary(store: Store, workout: Workout): string {
   if (workout.cardio) {
     const option = CARDIO_OPTIONS.find((candidate) => candidate.id === workout.cardio?.optionId);
-    return `${option?.label ?? "Cardio"}, ${workout.cardio.minutes} min`;
+    return option?.label ?? "Cardio";
   }
   const loggedCounts = workout.entries.map((entry) => entry.sets.filter(isLogged).length).filter((count) => count > 0);
   const sets = loggedCounts.reduce((sum, count) => sum + count, 0);

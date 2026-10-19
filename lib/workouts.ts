@@ -1,7 +1,7 @@
 import type { CardioOptionId, DayId, SetRow, StrengthDayId, Store, Workout } from "./types.ts";
 
 export type Removed = { workout: Workout; index: number };
-type Cardio = { optionId: CardioOptionId; minutes: number };
+type Cardio = { optionId: CardioOptionId };
 
 export function findWorkout(store: Store, date: string, dayId: DayId): Workout | undefined {
   return store.workouts.find((workout) => workout.date === date && workout.dayId === dayId);
@@ -53,9 +53,9 @@ export function finishWorkout(store: Store, workoutId: string, nowIso: string): 
 
 export function saveCardio(
   store: Store,
-  args: { date: string; optionId: CardioOptionId; minutes: number; newId: () => string; nowIso: string },
+  args: { date: string; optionId: CardioOptionId; newId: () => string; nowIso: string },
 ): Store {
-  const cardio: Cardio = { optionId: args.optionId, minutes: args.minutes };
+  const cardio: Cardio = { optionId: args.optionId };
   const existing = findWorkout(store, args.date, "cardio");
   if (existing) return replaceWorkout(store, { ...existing, cardio, finishedAt: existing.finishedAt ?? args.nowIso });
   const created: Workout = { id: args.newId(), date: args.date, dayId: "cardio", entries: [], cardio, finishedAt: args.nowIso };

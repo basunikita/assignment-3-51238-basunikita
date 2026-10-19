@@ -8,11 +8,10 @@ import { CARDIO_OPTIONS, TARGET_REPS, TARGET_SETS, TONE_LABELS, dayInfo, type Da
 import { exerciseProgress, lastSession, lastTimeLine, newBestCount, weekStrip, workoutSummary } from "@/lib/stats";
 import { useStore } from "@/lib/store-client";
 import type { CardioOptionId, Exercise, StrengthDayId, Store } from "@/lib/types";
-import { checkMinutes, MESSAGES } from "@/lib/validation";
+import { MESSAGES } from "@/lib/validation";
 import { countsAsWorkout, findWorkout, finishWorkout, saveCardio } from "@/lib/workouts";
 import ExerciseRow from "../components/ExerciseRow";
 import LoadGate from "../components/LoadGate";
-import NumberField from "../components/NumberField";
 import PageHeader from "../components/PageHeader";
 import { useToast } from "../components/ToastProvider";
 import WeekStrip from "../components/WeekStrip";
@@ -120,34 +119,30 @@ function CardioDay({ store, today, day }: { store: Store; today: string; day: Da
   const { update } = useStore();
   const saved = findWorkout(store, today, "cardio")?.cardio;
   const [optionId, setOptionId] = useState<CardioOptionId | null>(saved?.optionId ?? null);
-  const [minutes, setMinutes] = useState(saved ? String(saved.minutes) : "");
-  const [minutesTyped, setMinutesTyped] = useState(Boolean(saved));
-  const [errors, setErrors] = useState<{ option?: string; minutes?: string }>({});
+  const [optionError, setOptionError] = useState(false);
   const firstOption = useRef<HTMLInputElement>(null);
-  const minutesInput = useRef<HTMLInputElement>(null);
 
   const choose = (id: CardioOptionId) => {
     setOptionId(id);
-    if (!minutesTyped) setMinutes(String(CARDIO_OPTIONS.find((option) => option.id === id)?.minutes ?? ""));
-    if (errors.option) setErrors((current) => ({ ...current, option: undefined }));
+    setOptionError(false);
   };
 
   const save = () => {
-    const checkedMinutes = checkMinutes(minutes);
-    const next = { option: optionId ? undefined : MESSAGES.cardioOption, minutes: checkedMinutes.error ?? undefined };
-    setErrors(next);
-    if (next.option) return firstOption.current?.focus();
-    if (next.minutes || !optionId || checkedMinutes.value === null) return minutesInput.current?.focus();
+    if (!optionId) {
+      setOptionError(true);
+      firstOption.current?.focus();
+      return;
+    }
     const option = CARDIO_OPTIONS.find((candidate) => candidate.id === optionId);
-    update((current) => saveCardio(current, { date: today, optionId, minutes: checkedMinutes.value as number, newId: () => crypto.randomUUID(), nowIso: new Date().toISOString() }));
-    toast(`Cardio saved · ${option?.label}, ${checkedMinutes.value} min`);
+    update((current) => saveCardio(current, { date: today, optionId, newId: () => crypto.randomUUID(), nowIso: new Date().toISOString() }));
+    toast(`Cardio saved · ${option?.label}`);
     router.push("/");
   };
 
   return (
     <>
       <PageHeader back={BACK_TO_TODAY} title={day.name} badge={<Badge tone="cardio">{TONE_LABELS.cardio}</Badge>} meta="Pick one" />
-      <fieldset aria-describedby={errors.option ? "cardio-error" : undefined} className="grid gap-3">
+      <fieldset aria-describedby={optionError ? "cardio-error" : undefined} className="grid gap-3">
         <legend className={`${recipe.fieldLabel} mb-2`}>Which cardio did you do?</legend>
         {CARDIO_OPTIONS.map((option, index) => (
           <label
@@ -171,22 +166,8 @@ function CardioDay({ store, today, day }: { store: Store; today: string; day: Da
             </span>
           </label>
         ))}
-        {errors.option && <FieldError id="cardio-error" message={errors.option} />}
+        {optionError && <FieldError id="cardio-error" message={MESSAGES.cardioOption} />}
       </fieldset>
-      <NumberField
-        ref={minutesInput}
-        id="cardio-minutes"
-        label="Minutes"
-        inputMode="numeric"
-        suffix="min"
-        value={minutes}
-        error={errors.minutes}
-        onChange={(value) => {
-          setMinutes(value);
-          setMinutesTyped(true);
-        }}
-        className="max-w-48"
-      />
       <Button onClick={save}>Save cardio</Button>
     </>
   );

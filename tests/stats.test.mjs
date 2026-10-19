@@ -23,7 +23,7 @@ const TODAY = "2026-10-18";
 let n = 0;
 const strength = (date, dayId, entries) => ({ id: `w${++n}`, date, dayId, entries });
 const entry = (exerciseId, ...sets) => ({ exerciseId, sets: rows(...sets) });
-const cardio = (date, optionId, minutes) => ({ id: `w${++n}`, date, dayId: "cardio", entries: [], cardio: { optionId, minutes } });
+const cardio = (date, optionId) => ({ id: `w${++n}`, date, dayId: "cardio", entries: [], cardio: { optionId } });
 const withWorkouts = (workouts) => ({ ...createSeed(), workouts });
 
 const history = withWorkouts([
@@ -120,14 +120,14 @@ test("workout summaries", () => {
   ]);
   assert.equal(workoutSummary(store, big), "2 exercises, 3 sets");
   assert.equal(workoutSummary(store, strength(TODAY, "legs", [entry("rdls", [10, 60, true])])), "1 exercise, 1 set");
-  assert.equal(workoutSummary(store, cardio(TODAY, "incline", 30)), "Incline walk, 30 min");
+  assert.equal(workoutSummary(store, cardio(TODAY, "incline")), "Incline walk");
 });
 
 test("the week strip runs Monday to Sunday with tones and names", () => {
   const store = withWorkouts([
     strength("2026-10-12", "back-biceps", [entry("lat-pulldowns", [10, 50, true])]),
     strength("2026-10-15", "legs", [entry("rdls", [10, 60, true])]),
-    cardio("2026-10-15", "incline", 30),
+    cardio("2026-10-15", "incline"),
     strength("2026-10-16", "legs", [entry("rdls", [10, 60, false])]), // nothing ticked: doesn't count
   ]);
   const strip = weekStrip(store, "2026-10-16");
@@ -147,7 +147,7 @@ test("the week strip runs Monday to Sunday with tones and names", () => {
 test("the streak counts weeks back from this one, or from last week if this one is empty", () => {
   const store = withWorkouts([
     strength("2026-10-07", "legs", [entry("rdls", [10, 60, true])]), // week of Oct 5
-    cardio("2026-10-13", "incline", 30), // week of Oct 12
+    cardio("2026-10-13", "incline"), // week of Oct 12
   ]);
   assert.equal(streakWeeks(store, TODAY), 2);
   assert.equal(streakWeeks(store, "2026-10-20"), 2); // new week, nothing yet: still 2

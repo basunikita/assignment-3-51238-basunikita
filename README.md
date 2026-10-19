@@ -24,7 +24,7 @@ flowchart TD
   C --> E[Pick day]
   D --> E
   E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb · try 55'"]
-  E -- Cardio --> G["Pick cardio option; minutes filled in"] --> S
+  E -- Cardio --> G["Pick which of my four cardio options I did"] --> S
   E -- Rest --> R["Rest day: week strip and link to history"]
   F --> H["Log exercise: 3 set rows filled in, chart of past max weights"]
   H --> I{Valid?}
