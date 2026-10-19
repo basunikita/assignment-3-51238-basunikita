@@ -448,7 +448,9 @@ Plate Room recipe:
 - StreakBadge
 - MaxWeightChart
 - MonthCalendar
-- Toast (`role="status"`, with an optional Undo button, 8 seconds, reachable by keyboard)
+- Toast (`role="status"`, reachable by keyboard): 4 seconds for plain confirmations like "Workout
+  saved", and 8 seconds when it has an Undo button. Nikita halved the plain one in review on
+  2026-10-18.
 - Banner (warnings and new bests)
 
 **Shared states:** loading, empty and error all use the one `StatePanel`, each with a link back.

@@ -3,7 +3,9 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import Button from "../design-system/components/Button";
 
-const TOAST_MS = 8000;
+// Plain confirmations go quickly; toasts with Undo stay longer so there's time to reach the button.
+const TOAST_MS = 4000;
+const UNDO_TOAST_MS = 8000;
 
 type Toast = { id: number; message: string; undo?: () => void };
 type ShowToast = (message: string, undo?: () => void) => void;
@@ -30,7 +32,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   // The toast waits while someone is pointing at it or has focus in it.
   useEffect(() => {
     if (!toast || paused) return;
-    const timeout = setTimeout(() => setToast((current) => (current?.id === toast.id ? null : current)), TOAST_MS);
+    const timeout = setTimeout(() => setToast((current) => (current?.id === toast.id ? null : current)), toast.undo ? UNDO_TOAST_MS : TOAST_MS);
     return () => clearTimeout(timeout);
   }, [toast, paused]);
 
