@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Plate Log
 
-## Getting Started
+A daily exercise log for my gym routine, built for Design, Build, Ship (MPCS 51238),
+Assignment 3: Patterns & Flows. I log sets, reps and weight on my phone between sets; it shows
+what I lifted last time, graphs my max weight for each exercise, keeps a history of past
+workouts, and lets me add new exercises. It saves to the browser, so there's no account.
 
-First, run the development server:
+It reuses the **Plate Room** style and my workout routine from Assignment 2.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Live site: _coming soon (Vercel)_
+- Flows: [`flows.md`](flows.md)
+- Onboarding research: [`docs/research/onboarding.md`](docs/research/onboarding.md)
+
+## Flows
+
+**Main task:** I pick today's day → I log each set as I finish it → I come back next week and it
+shows what I lifted last time, suggests what to try, and my chart is going up.
+
+```mermaid
+flowchart TD
+  A[Open app] --> B{Anything saved?}
+  B -- No --> C["First visit: 'Your routine is loaded. Which day are you doing?'"]
+  B -- Yes --> D["Welcome back: week strip, streak, last workout"]
+  C --> E[Pick day]
+  D --> E
+  E -- Strength --> F["Workout: exercises in order, each with 'Last 3×10 @ 50 lb · try 55'"]
+  E -- Cardio --> G["Pick cardio option; minutes filled in"] --> S
+  E -- Rest --> R["Rest day: week strip and link to history"]
+  F --> H["Log exercise: 3 set rows filled in, chart of past max weights"]
+  H --> I{Valid?}
+  I -- No --> J["Message under the field; typed value kept"] --> H
+  I -- Yes --> K["Set ✓ → rest timer · 'New best: 55 lb (was 50)'"]
+  K --> H
+  H --> F
+  F --> S["Finish workout → saved to history"]
+  S --> D
+  D --> T["History by day → edit or delete, with Undo"]
+  D --> U["Exercises → history, chart, bests · Add exercise form"]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+See [`flows.md`](flows.md) for what happens on each step and the list of pages.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Onboarding research
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Before designing the first visit, agents studied three browser-based trackers that need no
+account — Liftosaur, Setly and TrackMySet — by using each one as a brand-new user. All three
+drop you on an empty screen, none of them shows a single form error, and none suggests a next
+weight. So Plate Log opens with my routine already loaded, explains every error next to the
+field, and suggests what to lift next. Details and screenshots:
+[`docs/research/onboarding.md`](docs/research/onboarding.md).
 
-## Learn More
+## First-run check
 
-To learn more about Next.js, take a look at the following resources:
+_To do after deploying: an agent will try the live site as a brand-new user, come back later,
+and give usability feedback here._
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running it
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm install
+npm run dev     # http://localhost:3000
+npm run build
+npm run lint
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with Next.js 16 and Tailwind CSS 4. Data lives in `localStorage` only — no database,
+accounts or external APIs.
