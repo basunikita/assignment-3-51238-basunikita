@@ -2,8 +2,8 @@
 
 **Date:** 2026-10-18
 
-**Status:** Builder check done. Waiting for Nikita to read it. It comes from the plan she
-approved in plan mode on 2026-10-18.
+**Status:** Approved by Nikita on 2026-10-18, after a builder check. It comes from the plan she
+approved in plan mode the same day.
 
 Calls Claude made on details Nikita didn't discuss are marked **(Claude's call)**. Everything else
 was decided by Nikita or accepted by her in review.
