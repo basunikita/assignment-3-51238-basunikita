@@ -12,6 +12,9 @@ type NumberFieldProps = {
   onChange: (value: string) => void;
   onBlur?: () => void;
   error?: string | null;
+  // For errors shown outside the field (the set table shows one message under the whole row).
+  invalid?: boolean;
+  describedBy?: string;
   inputMode: "numeric" | "decimal";
   suffix?: string;
   ref?: Ref<HTMLInputElement>;
@@ -20,9 +23,10 @@ type NumberFieldProps = {
 
 // A text input for numbers (type="number" drops what people type when it isn't a number, so the
 // error message couldn't quote their input back). Errors sit under the field and are tied to it.
-export default function NumberField({ id, label, labelledBy, value, onChange, onBlur, error, inputMode, suffix, ref, className = "" }: NumberFieldProps) {
+export default function NumberField({ id, label, labelledBy, value, onChange, onBlur, error, invalid, describedBy, inputMode, suffix, ref, className = "" }: NumberFieldProps) {
   const recipe = useRecipe();
-  const errorId = `${id}-error`;
+  const errorId = error ? `${id}-error` : describedBy;
+  const isInvalid = Boolean(error) || invalid;
   return (
     <div className={`grid content-start gap-1.5 ${className}`}>
       {label && (
@@ -39,8 +43,8 @@ export default function NumberField({ id, label, labelledBy, value, onChange, on
           autoComplete="off"
           value={value}
           aria-labelledby={label ? undefined : labelledBy}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-invalid={isInvalid ? true : undefined}
+          aria-describedby={isInvalid ? errorId : undefined}
           onChange={(event) => onChange(event.target.value)}
           onBlur={onBlur}
           className={`${recipe.field} ${recipe.focus} min-h-11 min-w-0 font-numbers text-2xl font-extrabold aria-invalid:border-(--swatch-red) aria-invalid:border-[3px]`}
@@ -48,7 +52,7 @@ export default function NumberField({ id, label, labelledBy, value, onChange, on
         {suffix && <span className="font-bold text-muted">{suffix}</span>}
       </div>
       {error && (
-        <p id={errorId} role="alert" className="flex gap-1.5 text-sm font-bold text-ink">
+        <p id={`${id}-error`} role="alert" className="flex gap-1.5 text-sm font-bold text-ink">
           <span aria-hidden="true" className="grid size-5 shrink-0 place-items-center bg-(--swatch-red) text-xs text-(--swatch-panel)">
             !
           </span>
